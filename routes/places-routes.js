@@ -1,7 +1,9 @@
 const express = require("express");
 
+const HttpError = require("../models/http-error");
+
 const router = express.Router();
-// it gives us a special object which we can refister middleware and then we export the configured routes and import them into app.js and register this configured router as one single middleware in app.js.
+// it gives us a special object which we can register middleware and then we export the configured routes and import them into app.js and register this configured router as one single middleware in app.js.
 
 const DUMMY_PLACES = [
   {
@@ -22,7 +24,11 @@ router.get("/:pid", (req, res, next) => {
   const place = DUMMY_PLACES.find((p) => {
     return p.id === placeId;
   });
-  console.log("get request in places");
+  if (!place) {
+    return next(
+      new HttpError("Could not find a place for the provided id.", 404)
+    );
+  }
   // send back some data in json format. it can take anything and convert it into json
   res.json({ place }); // { place } => { place: place } if the name of the property is equal to the name of the variable
 });
@@ -32,6 +38,13 @@ router.get("/user/:uid", (req, res, next) => {
   const place = DUMMY_PLACES.find((p) => {
     return p.creator === userId;
   });
+
+  if (!place) {
+    // standard code for not finding anything for a given input(404) and then call json to send some data
+    return next(
+      new HttpError("Could not find a place for the provided user id.", 404)
+    );
+  }
   res.json({ place });
 });
 
