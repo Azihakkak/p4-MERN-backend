@@ -38,7 +38,7 @@ const getPlaceByUserId = (req, res, next) => {
   });
 
   if (!place) {
-    // standard code for not finding anything for a given input(404) and then call json to send some data
+    // standard code for not finding anything for a given input(404)
     return next(
       new HttpError("Could not find a place for the provided user id.", 404)
     );
