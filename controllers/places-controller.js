@@ -1,6 +1,8 @@
 // we can place our middleware functions here and in routes just point to these controllers
 
 const { v4: uuid } = require("uuid");
+const { validationResult } = require("express-validator");
+
 const HttpError = require("../models/http-error");
 
 let DUMMY_PLACES = [
@@ -47,6 +49,11 @@ const getPlacesByUserId = (req, res, next) => {
 };
 
 const createPlace = (req, res, next) => {
+  const errors = validationResult(req); // it will look into this object to see if there are any validation errors
+
+  if (!errors.isEmpty()) {
+    throw new HttpError("Invalid inputs passed, please check your data.", 422);
+  }
   // in post requests we expect to get data from the body of the request we have to parse the body in app.js first then we have access to req.body
   const { title, description, coordinates, address, creator } = req.body;
   const createdPlace = {
